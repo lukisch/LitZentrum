@@ -1,0 +1,68 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://litzentrum.local/schemas/lisum.json",
+  "title": "LiSum",
+  "description": "Zusammenfassungen-Schema für Literaturquellen",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "default": "1.0.0"
+    },
+    "summaries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Eindeutige ID der Zusammenfassung"
+          },
+          "title": {
+            "type": "string",
+            "description": "Titel der Zusammenfassung"
+          },
+          "content": {
+            "type": "string",
+            "description": "Zusammenfassungs-Inhalt (Markdown)"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["full", "chapter", "section", "abstract"],
+            "default": "full",
+            "description": "Art der Zusammenfassung"
+          },
+          "source": {
+            "type": "string",
+            "enum": ["manual", "ai_generated", "imported"],
+            "default": "manual",
+            "description": "Quelle der Zusammenfassung"
+          },
+          "ai_model": {
+            "type": ["string", "null"],
+            "description": "Verwendetes KI-Modell (falls ai_generated)"
+          },
+          "pages": {
+            "type": ["string", "null"],
+            "description": "Zusammengefasste Seiten (z.B. '1-50')"
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" },
+            "default": []
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": ["id", "title", "content", "created_at"]
+      }
+    }
+  },
+  "required": ["schema_version", "summaries"]
+}

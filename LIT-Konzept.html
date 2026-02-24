@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>PATCH – LitZentrum: Ordnerbasiertes Literatur- & Wissensmanagement auf Basis von ProFiler</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.6;
+      margin: 2rem auto;
+      max-width: 980px;
+      padding: 0 1.5rem;
+      color: #222;
+      background: #fafafa;
+    }
+    h1, h2, h3, h4 {
+      color: #111;
+    }
+    code {
+      font-family: Consolas, "Fira Code", monospace;
+      background: #f4f4f4;
+      padding: 2px 4px;
+      border-radius: 3px;
+    }
+    pre {
+      background: #111;
+      color: #f4f4f4;
+      padding: 1rem;
+      overflow-x: auto;
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+    pre code {
+      background: transparent;
+      padding: 0;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 1rem 0;
+      font-size: 0.95rem;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 0.5rem 0.7rem;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: #f0f0f0;
+      font-weight: 600;
+    }
+    tr:nth-child(even) td {
+      background: #fdfdfd;
+    }
+    .meta {
+      font-size: 0.85rem;
+      color: #666;
+    }
+    .box {
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      background: #fff;
+      margin: 1rem 0;
+    }
+    .pill {
+      display: inline-block;
+      padding: 0.1rem 0.5rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      background: #e5f3ff;
+      color: #004b8d;
+      margin-left: 0.4rem;
+    }
+    .caption {
+      font-size: 0.8rem;
+      color: #777;
+      margin-top: -0.2rem;
+      margin-bottom: 0.7rem;
+    }
+    ul ul {
+      margin-top: 0.15rem;
+      margin-bottom: 0.15rem;
+    }
+  </style>
+</head>
+<body>
+
+<h1>📚 PATCH: LitZentrum – Ordnerbasiertes Literatur- & Wissensmanagement auf Basis von ProFiler</h1>
+<p class="meta">
+  <strong>Version:</strong> 1.0<br />
+  <strong>Datum:</strong> 2026‑01‑02<br />
+  <strong>Autor:</strong> Lukas<br />
+  <strong>Ziel:</strong> Neues Tool <strong>„LitZentrum“</strong> definieren, das ProFiler/ProFileViewer als Engine nutzt, 
+  um ein <strong>ordnerbasiertes, einfaches Literaturverwaltungs‑ & Zitat‑System</strong> bereitzustellen – 
+  kompatibel mit DokuZentrum Pro, ohne Citavi‑Komplexität.
+</p>
+
+<div class="box">
+  <strong>Leitprinzipien:</strong>
+  <ul>
+    <li><strong>Ordner = Projekt</strong> (keine versteckten Datenbanken).</li>
+    <li><strong>Pro Quelle ein Ordner</strong> mit klaren Dateien pro Typ (Meta, Notizen, Aufgaben, Zitate, Summaries).</li>
+    <li><strong>Aufgaben sowohl projektweit als auch quellengebunden.</strong></li>
+    <li><strong>ProFiler als Index‑, Metadaten‑ und Versionierungs‑Engine.</strong></li>
+    <li><strong>DokuZentrum‑Tools</strong> für PDF‑Markierung, Kommentare, Auszüge weiterverwenden.</li>
+    <li>Optionale <strong>Ollama‑Integration mit Queue</strong> (z. B. Mistral) für Zusammenfassungen.</li>
+    <li>Langfristig: ISBN/Online‑Datenbankzugriff, ggf. via KI‑Bridge (Claude) und/oder klassische APIs.</li>
+  </ul>
+</div>
+
+<hr />
+
+<h2>1. 🎯 Zielbild von LitZentrum</h2>
+
+<p>LitZentrum ist ein <strong>leichtgewichtiges, ordnerbasiertes Literaturverwaltungs‑Tool</strong>, das:</p>
+<ul>
+  <li>Pro Projekt genau einen Hauptordner verwendet.</li>
+  <li>Pro Quelle (PDF, TXT, Bild, Web‑Snapshot) einen eigenen Unterordner anlegt.</li>
+  <li>Metadaten, Aufgaben, Notizen, Zitate, Zusammenfassungen als <strong>lesbare Dateien</strong> im Dateisystem ablegt.</li>
+  <li>Pro Projekt ein automatisches <strong>Literaturverzeichnis</strong> erzeugt (z. B. BibTeX, APA, MLA, DIN).</li>
+  <li>Pro Quelle und projektweit <strong>Aufgaben</strong> verwaltet.</li>
+  <li>Über ProFiler indiziert (Volltext, Metadaten, Versionen) und in der GUI komfortabel durchsuchbar ist.</li>
+  <li>Optional KI‑Hilfe (Ollama/Mistral) für Zusammenfassungen anbietet – per Rechtsklick‑Queue.</li>
+</ul>
+
+<p>Es ist bewusst <strong>nicht</strong> Citavi 2.0, sondern ein modernes, durchschaubares System, das mit DokuZentrum und ProFiler zusammenspielt.</p>
+
+<hr />
+
+<h2>2. 🧱 Struktur: Ordner, Dateien & Typen</h2>
+
+<h3>2.1 Projektstruktur (Top-Level)</h3>
+
+<pre><code>Projekt_A/
+ ├── Quellen/
+ │    ├── Quelle_01/
+ │    ├── Quelle_02/
+ │    └── ...
+ ├── projekt_tasks.litask       # projektweite Aufgaben
+ ├── projekt_notes.linote       # projektweite Notizen
+ ├── projekt_biblio.bib         # generiertes Literaturverzeichnis
+ └── projekt_config.liproj      # (leichtgewichtig, optional: UI-Einstellungen etc.)
+</code></pre>
+
+<h3>2.2 Struktur pro Quelle</h3>
+
+<p>Für jede Quelle wird ein eigener Ordner angelegt, z. B.:</p>
+
+<pre><code>Projekt_A/Quellen/Smith2023_AI_Study/
+ ├── source.pdf                 # Originalquelle (PDF, TXT etc.)
+ ├── meta.limeta               # Metadaten zur Quelle
+ ├── notes.linote              # Notizen zur Quelle
+ ├── tasks.litask              # Aufgaben, speziell zu dieser Quelle
+ ├── summaries.lisum           # Zusammenfassungen (manuell + KI)
+ └── quotes.liquote            # Zitate (direkt/indirekt) mit Seitenangaben
+</code></pre>
+
+<p>Damit gilt:</p>
+<ul>
+  <li><strong>Pro Quelle EIN Ordner</strong>.</li>
+  <li>Innerhalb des Ordners: <strong>eine Datei pro Typ</strong> (Metadaten, Notizen, Aufgaben, Summaries, Zitate).</li>
+  <li>Keine Dateiexplosion (nicht „eine Datei pro Zitat“), aber weiterhin gut editierbar.</li>
+</ul>
+
+<hr />
+
+<h2>3. 📄 Dateiformate (logisch, KI- & Tool-freundlich)</h2>
+
+<p>Alle Dateien sind textbasiert (JSON‑Lines oder JSON‑Array), um sie:</p>
+<ul>
+  <li>per GUI zu bearbeiten,</li>
+  <li>per CLI/Tools zu bearbeiten,</li>
+  <li>von KI‑Tools (Ollama/Claude) interpretierbar zu machen.</li>
+</ul>
+
+<h3>3.1 Metadaten pro Quelle: <code>meta.limeta</code></h3>
+
+<pre><code class="language-json">{
+  "title": "Understanding Artificial Intelligence",
+  "authors": ["Smith, John", "Doe, Anna"],
+  "year": 2023,
+  "doi": "10.1234/ai.2023.001",
+  "isbn": "978-3-16-148410-0",
+  "publisher": "Springer",
+  "journal": "AI Journal",
+  "volume": "42",
+  "issue": "3",
+  "pages": "12-34",
+  "tags": ["AI", "Methodik"],
+  "source_file": "source.pdf",
+  "metadata_source": "manual|isbn_lookup|ai",
+  "verified": false
+}
+</code></pre>
+
+<h3>3.2 Notizen pro Quelle: <code>notes.linote</code></h3>
+
+<p>Empfohlen: JSON‑Lines oder ein JSON‑Array.</p>
+
+<pre><code class="language-json">[
+  {
+    "id": "n001",
+    "created_at": "2026-01-02T10:30:00",
+    "text": "Wichtige Idee zur Einführung in Kapitel 1.",
+    "tags": ["intro", "wichtig"]
+  },
+  {
+    "id": "n002",
+    "created_at": "2026-01-02T11:05:00",
+    "text": "Vergleichbar mit Studie von Müller 2020.",
+    "tags": ["vergleich"]
+  }
+]
+</code></pre>
+
+<h3>3.3 Aufgaben pro Quelle: <code>tasks.litask</code></h3>
+
+<p>Sowohl projektweite als auch quellenbezogene Aufgaben haben dasselbe Schema.</p>
+
+<pre><code class="language-json">[
+  {
+    "id": "t001",
+    "type": "read",
+    "status": "open",
+    "title": "Kapitel 2 gründlich lesen",
+    "description": "",
+    "created_at": "2026-01-02T09:00:00",
+    "due": null,
+    "priority": "normal"
+  },
+  {
+    "id": "t002",
+    "type": "ki_summary",
+    "status": "queued",
+    "title": "KI-Zusammenfassung für Abschnitt 2.3 erstellen",
+    "description": "Ollama/Mistral: 3-5 Bullet Points",
+    "created_at": "2026-01-02T09:15:00",
+    "due": null,
+    "priority": "low"
+  }
+]
+</code></pre>
+
+<h3>3.4 Zusammenfassungen pro Quelle: <code>summaries.lisum</code></h3>
+
+<p>Manuelle + KI‑basierte Summaries – eindeutig gekennzeichnet.</p>
+
+<pre><code class="language-json">[
+  {
+    "id": "s001",
+    "source": "manual",
+    "created_at": "2026-01-02T12:00:00",
+    "author": "Lukas",
+    "scope": "overall",
+    "text": "Kurze manuelle Zusammenfassung der gesamten Studie..."
+  },
+  {
+    "id": "s002",
+    "source": "ai_ollama_mistral",
+    "created_at": "2026-01-02T12:05:00",
+    "scope": "section_2.3",
+    "text": "- Punkt 1...\n- Punkt 2...\n- Punkt 3...",
+    "prompt": "Fasse Abschnitt 2.3 in 3-5 Bullet Points zusammen.",
+    "model": "mistral:latest"
+  }
+]
+</code></pre>
+
+<h3>3.5 Zitate pro Quelle: <code>quotes.liquote</code></h3>
+
+<pre><code class="language-json">[
+  {
+    "id": "q001",
+    "type": "direct",
+    "page": 12,
+    "location_hint": "Absatz 3",
+    "text": "This is the original quotation as it appears in the text.",
+    "comment": "Gut geeignet für Einleitung.",
+    "tags": ["intro", "definition"]
+  },
+  {
+    "id": "q002",
+    "type": "indirect",
+    "page": 25,
+    "location_hint": "Tabelle 2",
+    "text": "Paraphrasierte Aussage zur Methodik des Autors.",
+    "comment": "",
+    "tags": ["methodik"]
+  }
+]
+</code></pre>
+
+<h3>3.6 Projektweite Aufgaben/Notizen</h3>
+
+<p>Gleiches Format wie die quellengebundenen, aber in:</p>
+
+<ul>
+  <li><code>projekt_tasks.litask</code></li>
+  <li><code>projekt_notes.linote</code></li>
+</ul>
+
+<hr />
+
+<h2>4. 🔌 Verknüpfung mit bestehenden Tools</h2>
+
+<h3>4.1 ProFiler / ProFileViewer</h3>
+
+<p>LitZentrum baut auf dem ProFiler‑Ökosystem auf:</p>
+<ul>
+  <li><strong>ProFiler</strong> liefert:
+    <ul>
+      <li>Hashing (SHA‑256) für Quellen</li>
+      <li>Versionierung (files/versions)</li>
+      <li>PDF‑Metadaten (encrypted, has_text, was_encrypted)</li>
+      <li>Multi‑Source‑Index (wenn Projekte über mehrere Wurzeln verteilt sind)</li>
+      <li>Duplikat‑Erkennung</li>
+    </ul>
+  </li>
+  <li><strong>ProFileViewer</strong> (SearchWidgetHybrid) kann als Basis für:
+    <ul>
+      <li>Datei‑Liste je Projekt</li>
+      <li>Filter (nur Quellen vs. nur Zitate vs. nur Aufgaben)</li>
+      <li>Vorschau (für PDFs, Text, Metadaten)</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Integrationsebene:</p>
+
+<pre><code>LitZentrum/
+ ├── core/
+ │    ├── profiler_bridge.py  # Wrapper um ConnectionDB, SearchWorker etc.
+ │    └── project_index.py    # projekteigener Index (Referenz auf ProFiler-DB)
+</code></pre>
+
+<h3>4.2 DokuZentrum Pro (PDF-Werkstatt)</h3>
+
+<p>Für PDF‑bezogene Arbeiten (Markieren, Kommentare, Auszüge, Schwärzung) nutzt LitZentrum <strongnicht> eigene Tools</strong>, sondern verweist auf DokuZentrum:</p>
+
+<ul>
+  <li>Rechtsklick auf <code>source.pdf</code>:
+    <ul>
+      <li>„In PDF‑Werkstatt öffnen“ (DokuZentrum)</li>
+      <li>„Auszug erstellen …“</li>
+      <li>„Schwärzen …“</li>
+      <li>„Als Text extrahieren …“</li>
+    </ul>
+  </li>
+  <li>PDF‑Marker & Schwärzer liefern die Basis für Zitate:
+    <ul>
+      <li>„Markierung → Zitat in <code>quotes.liquote</code> übernehmen“</li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<h2>5. 🤖 Ollama-Integration mit Queue (Summaries)</h2>
+
+<h3>5.1 Workflow-Idee</h3>
+
+<p>Konzept:</p>
+<ol>
+  <li>Nutzer markiert eine Quelle oder einen Abschnitt (z. B. durch Seitenangabe/Notiz).</li>
+  <li>Rechtsklick:
+    <code>„Zur KI-Queue hinzufügen → Zusammenfassung mit Mistral“</code>
+  </li>
+  <li>Ein Queue‑Worker verarbeitet Einträge nacheinander:
+    <ul>
+      <li>Liest relevanten Text (aus PDF‑Text, aus OCR oder aus Export).</li>
+      <li>Ruft Ollama (lokal) mit Mistral‑Modell auf.</li>
+      <li>Schreibt Ergebnis als neuen Eintrag in <code>summaries.lisum</code> mit <code>source = "ai_ollama_mistral"</code>.</li>
+    </ul>
+  </li>
+  <li>GUI aktualisiert Summaries‑Liste zur Quelle.</li>
+</ol>
+
+<h3>5.2 Technische Verankerung (Stub)</h3>
+
+<pre><code class="language-python"># core/ai/ollama_queue.py (Konzept)
+
+class SummaryJob:
+    def __init__(self, project_path, source_rel_path, scope, pages=None):
+        self.project_path = project_path
+        self.source_rel_path = source_rel_path
+        self.scope = scope
+        self.pages = pages or []
+
+class OllamaQueue:
+    def __init__(self, model="mistral:latest"):
+        self.model = model
+        self.jobs = []
+
+    def enqueue(self, job: SummaryJob):
+        self.jobs.append(job)
+
+    def process_next(self):
+        if not self.jobs:
+            return
+        job = self.jobs.pop(0)
+        # 1. Text extrahieren (PDF -> Text)
+        # 2. Ollama-Request erstellen
+        # 3. Ergebnis in summaries.lisum eintragen
+        ...
+</code></pre>
+
+<hr />
+
+<h2>6. 🖱 GUI-Workflows (Kernaktionen)</h2>
+
+<h3>6.1 Pro Projekt</h3>
+
+<ul>
+  <li>Projektordner wählen / erstellen.</li>
+  <li>Links: Projektbaum (Quellenordner + projektweite Dateien).</li>
+  <li>Mitte: Liste aller Quellen / Zitate / Aufgaben (filterbar).</li>
+  <li>Rechts: Detailansicht zur ausgewählten Quelle:
+    <ul>
+      <li>Metadaten‑Maske (Titel, Autor, Jahr, ISBN, Tags …)</li>
+      <li>Tabs für:
+        <ul>
+          <li>Notizen</li>
+          <li>Aufgaben (Quelle)</li>
+          <li>Zusammenfassungen</li>
+          <li>Zitate</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h3>6.2 Rechtsklick-Aktionen (Beispiele)</h3>
+
+<ul>
+  <li>Auf <strong>Quelle (Ordner)</strong>:
+    <ul>
+      <li>„Quelle öffnen“ (PDF/Text)</li>
+      <li>„Metadaten bearbeiten“</li>
+      <li>„Neue Notiz erstellen“ → Eintrag in <code>notes.linote</code></li>
+      <li>„Neue Aufgabe“ → Eintrag in <code>tasks.litask</code></li>
+      <li>„Neue KI‑Zusammenfassung (Queue)“ → Job in Ollama‑Queue</li>
+    </ul>
+  </li>
+  <li>Auf <strong>Zitat</strong>:
+    <ul>
+      <li>„Direktes Zitat kopieren“ (Text + Kurzverweis, z. B. APA‑Stil)</li>
+      <li>„Indirektes Zitat kopieren“</li>
+      <li>„BibTeX‑Eintrag kopieren“ (via <code>projekt_biblio.bib</code>)</li>
+    </ul>
+  </li>
+  <li>Auf <strong>Projekt</strong>:
+    <ul>
+      <li>„Literaturverzeichnis generieren / aktualisieren“ → <code>projekt_biblio.bib</code></li>
+      <li>„Projektweite Aufgaben anzeigen“</li>
+      <li>„Projektweite Notizen anzeigen“</li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<h2>7. 📊 Vergleich: Citavi vs. LitZentrum (Konzeptuell)</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Aspekt</th>
+      <th>Citavi</th>
+      <th>LitZentrum</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Datenmodell</td>
+      <td>Proprietäre Projekte / DB</td>
+      <td>Ordner + Dateien, alles sichtbar</td>
+    </tr>
+    <tr>
+      <td>Komplexität</td>
+      <td>Sehr hoch (viele Masken, Modi)</td>
+      <td>Minimal, wenige klare Views</td>
+    </tr>
+    <tr>
+      <td>PDF‑Workflows</td>
+      <td>Begrenzt</td>
+      <td>Sehr stark via DokuZentrum (Marker, Schwärzer, Auszüge)</td>
+    </tr>
+    <tr>
+      <td>Wissenselemente</td>
+      <td>Zitate, Gedanken, Aufgaben</td>
+      <td>Zitate, Notizen, Aufgaben, Summaries (klar getrennte Dateien)</td>
+    </tr>
+    <tr>
+      <td>Offline‑First</td>
+      <td>Ja</td>
+      <td>Ja, plus absolut transparente Struktur</td>
+    </tr>
+    <tr>
+      <td>Teamarbeit</td>
+      <td>Server/Cloud nötig</td>
+      <td>Einfach per Ordner‑Sharing (Git, Cloud‑Sync, etc.)</td>
+    </tr>
+    <tr>
+      <td>KI‑Integration</td>
+      <td>Keine native</td>
+      <td>Ollama‑Queue für Summaries, optional KI‑Metadaten</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h2>8. 🧩 Implementierungs-Hinweise für Claude</h2>
+
+<ul>
+  <li>LitZentrum ist ein <strong>eigenständiges Tool</strong>, aber:
+    <ul>
+      <li>nutzt ProFiler‑Klassen für Index + Metadaten,</li>
+      <li>kann DokuZentrum‑PDF‑Werkstatt über Kontextmenüs aufrufen,</li>
+      <li>kann perspektivisch in DokuZentrum als „Projekt‑Literaturmodus“ eingebettet werden.</li>
+    </ul>
+  </li>
+  <li>Dateiformate möglichst stabil halten, damit:
+    <ul>
+      <li>spätere KI‑Module (z. B. Claude‑Bridge mit externem DB‑Zugriff) Metadaten ergänzen können,</li>
+      <li>Ollama/Mistral‑Summaries per einfachem JSON‑Write ergänzt werden können.</li>
+    </ul>
+  </li>
+  <li>Eine erste Version kann:
+    <ul>
+      <li>ohne KI‑Queue starten,</li>
+      <li>ohne ISBN‑Online-Lookup starten,</li>
+      <li>aber die Dateistruktur & Metadaten‑Maske bereits vorsehen.</li>
+    </ul>
+  </li>
+</ul>
+
+</body>
+</html>

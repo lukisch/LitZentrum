@@ -1,0 +1,111 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://litzentrum.local/schemas/limeta.json",
+  "title": "LiMeta",
+  "description": "Metadaten-Schema für Literaturquellen",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "default": "1.0.0",
+      "description": "Schema-Version für Migration"
+    },
+    "title": {
+      "type": "string",
+      "description": "Titel der Quelle"
+    },
+    "authors": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Autorenliste im Format 'Nachname, Vorname'"
+    },
+    "year": {
+      "type": "integer",
+      "minimum": 1000,
+      "maximum": 2100,
+      "description": "Erscheinungsjahr"
+    },
+    "doi": {
+      "type": ["string", "null"],
+      "pattern": "^10\\..+/.+$",
+      "description": "Digital Object Identifier"
+    },
+    "isbn": {
+      "type": ["string", "null"],
+      "description": "ISBN-10 oder ISBN-13"
+    },
+    "publisher": {
+      "type": ["string", "null"],
+      "description": "Verlag"
+    },
+    "journal": {
+      "type": ["string", "null"],
+      "description": "Zeitschrift (bei Artikeln)"
+    },
+    "volume": {
+      "type": ["string", "null"],
+      "description": "Band/Volume"
+    },
+    "issue": {
+      "type": ["string", "null"],
+      "description": "Ausgabe/Issue"
+    },
+    "pages": {
+      "type": ["string", "null"],
+      "description": "Seitenzahlen (z.B. '12-34')"
+    },
+    "abstract": {
+      "type": ["string", "null"],
+      "description": "Zusammenfassung/Abstract"
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": [],
+      "description": "Schlagwörter"
+    },
+    "source_file": {
+      "type": ["string", "null"],
+      "description": "Dateiname der Quell-PDF"
+    },
+    "source_type": {
+      "type": "string",
+      "enum": ["article", "book", "chapter", "thesis", "conference", "website", "other"],
+      "default": "article",
+      "description": "Art der Quelle"
+    },
+    "metadata_source": {
+      "type": "string",
+      "enum": ["manual", "isbn_lookup", "doi_lookup", "ai_extracted", "bibtex_import"],
+      "default": "manual",
+      "description": "Woher stammen die Metadaten"
+    },
+    "verified": {
+      "type": "boolean",
+      "default": false,
+      "description": "Wurden die Metadaten verifiziert"
+    },
+    "url": {
+      "type": ["string", "null"],
+      "format": "uri",
+      "description": "URL zur Quelle"
+    },
+    "language": {
+      "type": "string",
+      "default": "de",
+      "description": "Sprache der Quelle (ISO 639-1)"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Erstellungszeitpunkt"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Letztes Update"
+    }
+  },
+  "required": ["title", "schema_version"],
+  "additionalProperties": true
+}

@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://litzentrum.local/schemas/linote.json",
+  "title": "LiNote",
+  "description": "Notizen-Schema für Literaturquellen",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "default": "1.0.0"
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Eindeutige ID der Notiz"
+          },
+          "content": {
+            "type": "string",
+            "description": "Notiz-Inhalt (Markdown)"
+          },
+          "page": {
+            "type": ["integer", "null"],
+            "minimum": 1,
+            "description": "Zugehörige Seitenzahl"
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" },
+            "default": []
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": ["id", "content", "created_at"]
+      }
+    }
+  },
+  "required": ["schema_version", "notes"]
+}
