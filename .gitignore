@@ -1,13 +1,38 @@
+# Python
 __pycache__/
-*.pyc
-*.pyo
-.venv/
-venv/
+*.py[cod]
+*$py.class
 *.egg-info/
 dist/
 build/
-releases/
 .pytest_cache/
-*.log
+
+# Virtuelle Umgebungen
+.venv/
+venv/
+
+# Releases
+releases/
+
+# Secrets
 .env
+
+# Logs
+*.log
+
+# Planung & Interne Doku
+PLAN.txt
 AUFGABEN.txt
+
+# Private / Archive
+_archive/
+_private/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
