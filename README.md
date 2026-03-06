@@ -15,6 +15,10 @@ Eine Desktop-Anwendung zur Verwaltung wissenschaftlicher Literatur mit lokalem S
 - 🤖 **KI-Integration**: Lokale Verarbeitung mit Ollama (optional)
 - 🔄 **Git-Integration**: Versionierung der Projekte
 
+## Screenshots
+
+![Hauptfenster](screenshots/main.png)
+
 ## Installation
 
 ```bash
@@ -132,3 +136,30 @@ Dieses Projekt verwendet PyQt6 (GPL) und PyMuPDF (AGPL).
 ## Version
 
 1.0.0 (Januar 2026)
+
+---
+
+## English
+
+A folder-based literature management system with PDF integration, notes, and optional AI support.
+
+### Features
+
+- Folder-based organization
+- PDF viewer integration
+- Note-taking
+- Optional AI support
+- Citation management
+
+### Installation
+
+```bash
+git clone https://github.com/lukisch/REL-PUB_LitZentrum_SUITE.git
+cd REL-PUB_LitZentrum_SUITE
+pip install -r requirements.txt
+python "src/main.py"
+```
+
+### License
+
+See [LICENSE](LICENSE) for details.
