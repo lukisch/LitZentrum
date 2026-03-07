@@ -1,95 +1,95 @@
 # LitZentrum
 
-**Ordnerbasierte Literaturverwaltung**
+**Folder-Based Literature Management**
 
-Eine Desktop-Anwendung zur Verwaltung wissenschaftlicher Literatur mit lokalem Speicherformat, PDF-Integration und optionaler KI-Unterstützung.
+A desktop application for managing academic literature with a local storage format, PDF integration, and optional AI support.
 
 ## Features
 
-- 📚 **Ordnerbasiertes System**: Jede Quelle in eigenem Ordner
-- 📄 **PDF-Integration**: Volltextsuche, Textextraktion
-- 📝 **Notizen & Zitate**: Seitenreferenzen, Tags, Kategorien
-- ✅ **Aufgabenverwaltung**: Pro Quelle und projektweite Tasks
-- 📋 **Zusammenfassungen**: Manuell oder KI-generiert
-- 📚 **Bibliografie**: BibTeX-Export, mehrere Zitationsstile
-- 🤖 **KI-Integration**: Lokale Verarbeitung mit Ollama (optional)
-- 🔄 **Git-Integration**: Versionierung der Projekte
+- 📚 **Folder-Based System**: Each source in its own folder
+- 📄 **PDF Integration**: Full-text search, text extraction
+- 📝 **Notes & Quotes**: Page references, tags, categories
+- ✅ **Task Management**: Per-source and project-wide tasks
+- 📋 **Summaries**: Manual or AI-generated
+- 📚 **Bibliography**: BibTeX export, multiple citation styles
+- 🤖 **AI Integration**: Local processing with Ollama (optional)
+- 🔄 **Git Integration**: Project versioning
 
 ## Screenshots
 
-![Hauptfenster](screenshots/main.png)
+![Main Window](screenshots/main.png)
 
 ## Installation
 
 ```bash
-# Repository klonen
+# Clone the repository
 cd LitZentrum
 
-# Abhängigkeiten installieren
+# Install dependencies
 pip install -r requirements.txt
 
-# Starten
+# Start
 python src/main.py
 ```
 
-## Abhängigkeiten
+## Dependencies
 
 - Python 3.10+
 - PyQt6
 - PyMuPDF (fitz)
 - bibtexparser
 - jsonschema
-- requests (für Ollama)
+- requests (for Ollama)
 
-## Projektstruktur
+## Project Structure
 
 ```
 LitZentrum/
 ├── src/
-│   ├── main.py                 # Einstiegspunkt
-│   ├── core/                   # Kernlogik
-│   │   ├── project_manager.py  # Projektverwaltung
-│   │   ├── source_manager.py   # Quellenverwaltung
-│   │   ├── event_bus.py        # Event-System
-│   │   └── settings_manager.py # Einstellungen
-│   ├── formats/                # Datei-Formate
-│   │   ├── limeta.py          # Metadaten
-│   │   ├── linote.py          # Notizen
-│   │   ├── liquote.py         # Zitate
-│   │   ├── litask.py          # Aufgaben
-│   │   └── lisum.py           # Zusammenfassungen
-│   ├── gui/                    # Benutzeroberfläche
+│   ├── main.py                 # Entry point
+│   ├── core/                   # Core logic
+│   │   ├── project_manager.py  # Project management
+│   │   ├── source_manager.py   # Source management
+│   │   ├── event_bus.py        # Event system
+│   │   └── settings_manager.py # Settings
+│   ├── formats/                # File formats
+│   │   ├── limeta.py          # Metadata
+│   │   ├── linote.py          # Notes
+│   │   ├── liquote.py         # Quotes
+│   │   ├── litask.py          # Tasks
+│   │   └── lisum.py           # Summaries
+│   ├── gui/                    # User interface
 │   │   ├── main_window.py
 │   │   ├── panels/
 │   │   ├── tabs/
 │   │   └── dialogs/
-│   └── modules/                # Erweiterungen
-│       ├── bibliography/       # BibTeX & Stile
-│       ├── pdf_workshop/       # PDF-Verarbeitung
-│       ├── ai/                 # Ollama-Integration
-│       └── sync/               # Git & Backup
-├── schemas/                    # JSON-Schemas
-├── tests/                      # Unit-Tests
+│   └── modules/                # Extensions
+│       ├── bibliography/       # BibTeX & styles
+│       ├── pdf_workshop/       # PDF processing
+│       ├── ai/                 # Ollama integration
+│       └── sync/               # Git & backup
+├── schemas/                    # JSON schemas
+├── tests/                      # Unit tests
 └── resources/                  # Icons etc.
 ```
 
-## Datei-Formate
+## File Formats
 
-Alle Daten werden als JSON gespeichert:
+All data is stored as JSON:
 
-| Format | Beschreibung |
+| Format | Description |
 |--------|-------------|
-| `.liproj` | Projektkonfiguration |
-| `.limeta` | Quellen-Metadaten |
-| `.linote` | Notizen |
-| `.liquote` | Zitate |
-| `.litask` | Aufgaben |
-| `.lisum` | Zusammenfassungen |
+| `.liproj` | Project configuration |
+| `.limeta` | Source metadata |
+| `.linote` | Notes |
+| `.liquote` | Quotes |
+| `.litask` | Tasks |
+| `.lisum` | Summaries |
 
-## Projekt-Aufbau
+## Project Layout
 
 ```
-MeinProjekt/
+MyProject/
 ├── projekt_config.liproj
 ├── projekt_tasks.litask
 ├── projekt_notes.linote
@@ -105,7 +105,7 @@ MeinProjekt/
 │       └── ...
 ```
 
-## Zitationsstile
+## Citation Styles
 
 - APA (7th Edition)
 - MLA (9th Edition)
@@ -113,53 +113,30 @@ MeinProjekt/
 - DIN 1505-2
 - Harvard
 
-## KI-Integration (Optional)
+## AI Integration (Optional)
 
-Für lokale KI-Funktionen wird Ollama verwendet:
+For local AI features, Ollama is used:
 
 ```bash
-# Ollama installieren (https://ollama.ai)
+# Install Ollama (https://ollama.ai)
 ollama run mistral
 ```
 
-Funktionen:
-- Automatische Zusammenfassungen
-- Zitat-Extraktion
-- Metadaten-Erkennung
+Features:
+- Automatic summaries
+- Quote extraction
+- Metadata detection
 
-## Lizenz
+## License
 
-AGPL v3 - Siehe [LICENSE](LICENSE)
+AGPL v3 - See [LICENSE](LICENSE)
 
-Dieses Projekt verwendet PyQt6 (GPL) und PyMuPDF (AGPL).
+This project uses PyQt6 (GPL) and PyMuPDF (AGPL).
 
 ## Version
 
-1.0.0 (Januar 2026)
+1.0.0 (January 2026)
 
 ---
 
-## English
-
-A folder-based literature management system with PDF integration, notes, and optional AI support.
-
-### Features
-
-- Folder-based organization
-- PDF viewer integration
-- Note-taking
-- Optional AI support
-- Citation management
-
-### Installation
-
-```bash
-git clone https://github.com/lukisch/REL-PUB_LitZentrum_SUITE.git
-cd REL-PUB_LitZentrum_SUITE
-pip install -r requirements.txt
-python "src/main.py"
-```
-
-### License
-
-See [LICENSE](LICENSE) for details.
+Deutsche Version: [README.de.md](README.de.md)
