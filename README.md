@@ -1,10 +1,151 @@
 # LitZentrum
 
+**Ordnerbasierte Literaturverwaltung**
+
+Eine Desktop-Anwendung zur Verwaltung akademischer Literatur mit lokalem Speicherformat, PDF-Integration und optionaler KI-Unterstuetzung.
+
+## Features
+
+- 📚 **Ordnerbasiertes System**: Jede Quelle in ihrem eigenen Ordner
+- 📄 **PDF-Integration**: Volltextsuche, Textextraktion
+- 📝 **Notizen & Zitate**: Seitenverweise, Tags, Kategorien
+- ✅ **Aufgabenverwaltung**: Pro Quelle und projektweit
+- 📋 **Zusammenfassungen**: Manuell oder KI-generiert
+- 📚 **Bibliographie**: BibTeX-Export, mehrere Zitierstile
+- 🤖 **KI-Integration**: Lokale Verarbeitung mit Ollama (optional)
+- 🔄 **Git-Integration**: Projektversionierung
+
+## Screenshots
+
+![Hauptfenster](screenshots/main.png)
+
+## Installation
+
+```bash
+# Repository klonen
+cd LitZentrum
+
+# Abhaengigkeiten installieren
+pip install -r requirements.txt
+
+# Starten
+python src/main.py
+```
+
+## Abhaengigkeiten
+
+- Python 3.10+
+- PyQt6
+- PyMuPDF (fitz)
+- bibtexparser
+- jsonschema
+- requests (fuer Ollama)
+
+## Projektstruktur
+
+```
+LitZentrum/
+├── src/
+│   ├── main.py                 # Einstiegspunkt
+│   ├── core/                   # Kernlogik
+│   │   ├── project_manager.py  # Projektverwaltung
+│   │   ├── source_manager.py   # Quellenverwaltung
+│   │   ├── event_bus.py        # Eventsystem
+│   │   └── settings_manager.py # Einstellungen
+│   ├── formats/                # Dateiformate
+│   │   ├── limeta.py          # Metadaten
+│   │   ├── linote.py          # Notizen
+│   │   ├── liquote.py         # Zitate
+│   │   ├── litask.py          # Aufgaben
+│   │   └── lisum.py           # Zusammenfassungen
+│   ├── gui/                    # Benutzeroberflaeche
+│   │   ├── main_window.py
+│   │   ├── panels/
+│   │   ├── tabs/
+│   │   └── dialogs/
+│   └── modules/                # Erweiterungen
+│       ├── bibliography/       # BibTeX & Stile
+│       ├── pdf_workshop/       # PDF-Verarbeitung
+│       ├── ai/                 # Ollama-Integration
+│       └── sync/               # Git & Backup
+├── schemas/                    # JSON-Schemas
+├── tests/                      # Unit-Tests
+└── resources/                  # Icons etc.
+```
+
+## Dateiformate
+
+Alle Daten werden als JSON gespeichert:
+
+| Format | Beschreibung |
+|--------|-------------|
+| `.liproj` | Projektkonfiguration |
+| `.limeta` | Quellenmetadaten |
+| `.linote` | Notizen |
+| `.liquote` | Zitate |
+| `.litask` | Aufgaben |
+| `.lisum` | Zusammenfassungen |
+
+## Projektlayout
+
+```
+MeinProjekt/
+├── projekt_config.liproj
+├── projekt_tasks.litask
+├── projekt_notes.linote
+├── Quellen/
+│   ├── Smith2023_Understanding_AI/
+│   │   ├── meta.limeta
+│   │   ├── notes.linote
+│   │   ├── quotes.liquote
+│   │   ├── tasks.litask
+│   │   ├── summaries.lisum
+│   │   └── source.pdf
+│   └── Doe2024_Machine_Learning/
+│       └── ...
+```
+
+## Zitierstile
+
+- APA (7. Ausgabe)
+- MLA (9. Ausgabe)
+- Chicago
+- DIN 1505-2
+- Harvard
+
+## KI-Integration (Optional)
+
+Fuer lokale KI-Features wird Ollama verwendet:
+
+```bash
+# Ollama installieren (https://ollama.ai)
+ollama run mistral
+```
+
+Features:
+- Automatische Zusammenfassungen
+- Zitatextraktion
+- Metadatenerkennung
+
+## Lizenz
+
+AGPL v3 - Siehe [LICENSE](LICENSE)
+
+Dieses Projekt verwendet PyQt6 (GPL) und PyMuPDF (AGPL).
+
+## Version
+
+1.0.0 (Januar 2026)
+
+---
+
+## English
+
 **Folder-Based Literature Management**
 
 A desktop application for managing academic literature with a local storage format, PDF integration, and optional AI support.
 
-## Features
+### Features
 
 - 📚 **Folder-Based System**: Each source in its own folder
 - 📄 **PDF Integration**: Full-text search, text extraction
@@ -15,11 +156,11 @@ A desktop application for managing academic literature with a local storage form
 - 🤖 **AI Integration**: Local processing with Ollama (optional)
 - 🔄 **Git Integration**: Project versioning
 
-## Screenshots
+### Screenshots
 
 ![Main Window](screenshots/main.png)
 
-## Installation
+### Installation
 
 ```bash
 # Clone the repository
@@ -32,7 +173,7 @@ pip install -r requirements.txt
 python src/main.py
 ```
 
-## Dependencies
+### Dependencies
 
 - Python 3.10+
 - PyQt6
@@ -41,7 +182,7 @@ python src/main.py
 - jsonschema
 - requests (for Ollama)
 
-## Project Structure
+### Project Structure
 
 ```
 LitZentrum/
@@ -73,7 +214,7 @@ LitZentrum/
 └── resources/                  # Icons etc.
 ```
 
-## File Formats
+### File Formats
 
 All data is stored as JSON:
 
@@ -86,7 +227,7 @@ All data is stored as JSON:
 | `.litask` | Tasks |
 | `.lisum` | Summaries |
 
-## Project Layout
+### Project Layout
 
 ```
 MyProject/
@@ -105,7 +246,7 @@ MyProject/
 │       └── ...
 ```
 
-## Citation Styles
+### Citation Styles
 
 - APA (7th Edition)
 - MLA (9th Edition)
@@ -113,7 +254,7 @@ MyProject/
 - DIN 1505-2
 - Harvard
 
-## AI Integration (Optional)
+### AI Integration (Optional)
 
 For local AI features, Ollama is used:
 
@@ -127,16 +268,12 @@ Features:
 - Quote extraction
 - Metadata detection
 
-## License
+### License
 
 AGPL v3 - See [LICENSE](LICENSE)
 
 This project uses PyQt6 (GPL) and PyMuPDF (AGPL).
 
-## Version
+### Version
 
 1.0.0 (January 2026)
-
----
-
-Deutsche Version: [README.de.md](README.de.md)
