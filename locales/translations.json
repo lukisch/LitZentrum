@@ -1,0 +1,54 @@
+{
+  "Einstellungen": {
+    "de": "Einstellungen",
+    "en": "Settings"
+  },
+  "Fällig:": {
+    "de": "Fällig:",
+    "en": "Due:"
+  },
+  "Kein PDF geladen\\n\\nWählen Sie eine Quelle mit PDF": {
+    "de": "Kein PDF geladen\\n\\nWählen Sie eine Quelle mit PDF",
+    "en": "No PDF loaded\\n\\nSelect a source with PDF"
+  },
+  "Kein Projekt geöffnet": {
+    "de": "Kein Projekt geöffnet",
+    "en": "No project open"
+  },
+  "Keine PDF ausgewählt": {
+    "de": "Keine PDF ausgewählt",
+    "en": "No PDF selected"
+  },
+  "Keine PDF verfügbar": {
+    "de": "Keine PDF verfügbar",
+    "en": "No PDF available"
+  },
+  "Keine Quelle ausgewählt": {
+    "de": "Keine Quelle ausgewählt",
+    "en": "No source selected"
+  },
+  "Keine Seite geladen": {
+    "de": "Keine Seite geladen",
+    "en": "No page loaded"
+  },
+  "Priorität:": {
+    "de": "Priorität:",
+    "en": "Priority:"
+  },
+  "✏️ Bearbeiten": {
+    "de": "✏️ Bearbeiten",
+    "en": "✏️ Edit"
+  },
+  "📁 Auswählen...": {
+    "de": "📁 Auswählen...",
+    "en": "📁 Select..."
+  },
+  "📄 PDF auswählen...": {
+    "de": "📄 PDF auswählen...",
+    "en": "📄 Select PDF..."
+  },
+  "📄 PDF extern öffnen": {
+    "de": "📄 PDF extern öffnen",
+    "en": "📄 Open PDF externally"
+  }
+}
