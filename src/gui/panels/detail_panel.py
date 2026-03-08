@@ -7,7 +7,8 @@ from typing import Optional
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QTabWidget,
-    QLabel, QScrollArea, QFrame, QPushButton, QTextEdit
+    QLabel, QScrollArea, QFrame, QPushButton, QTextEdit,
+    QApplication
 )
 
 from core import LitSource, SourceManager
@@ -68,7 +69,13 @@ class DetailPanel(QWidget):
         self.edit_btn.clicked.connect(self._edit_source)
         self.edit_btn.setEnabled(False)
         btn_layout.addWidget(self.edit_btn)
-        
+
+        self.cite_btn = QPushButton("📋 Als \\cite{} kopieren")
+        self.cite_btn.setToolTip("BibTeX-Zitierbefehl in die Zwischenablage kopieren")
+        self.cite_btn.clicked.connect(self._copy_cite_to_clipboard)
+        self.cite_btn.setEnabled(False)
+        btn_layout.addWidget(self.cite_btn)
+
         btn_layout.addStretch()
         header_layout.addLayout(btn_layout)
         
@@ -142,6 +149,7 @@ class DetailPanel(QWidget):
         # Buttons
         self.pdf_btn.setEnabled(self.source.has_pdf)
         self.edit_btn.setEnabled(True)
+        self.cite_btn.setEnabled(True)
         
         # Tabs laden
         self._load_tabs()
@@ -190,7 +198,8 @@ class DetailPanel(QWidget):
         
         self.pdf_btn.setEnabled(False)
         self.edit_btn.setEnabled(False)
-        
+        self.cite_btn.setEnabled(False)
+
         self.pdf_tab.clear()
         self.notes_tab.clear()
         self.quotes_tab.clear()
@@ -203,6 +212,21 @@ class DetailPanel(QWidget):
             import os
             os.startfile(str(self.source.pdf_path))
     
+    def _copy_cite_to_clipboard(self):
+        """Kopiert \\cite{bibtex_key} in die Zwischenablage"""
+        if not self.source:
+            return
+        key = self.source.meta.bibtex_key
+        cite_cmd = f"\\cite{{{key}}}"
+        clipboard = QApplication.clipboard()
+        clipboard.setText(cite_cmd)
+        # Statusmeldung ueber das Hauptfenster
+        window = self.window()
+        if hasattr(window, "statusBar"):
+            window.statusBar().showMessage(
+                f"Kopiert: {cite_cmd}", 3000
+            )
+
     def _edit_source(self):
         """Bearbeitet die Quelle"""
         if not self.source:

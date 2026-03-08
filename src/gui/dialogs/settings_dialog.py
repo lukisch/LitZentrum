@@ -99,10 +99,16 @@ class SettingsDialog(QDialog):
         self.ai_model_combo.setEditable(True)
         self.ai_model_combo.addItems(["mistral:latest", "llama2:latest", "codellama:latest"])
         ai_form.addRow("Modell:", self.ai_model_combo)
-        
-        test_btn = QPushButton("🔌 Verbindung testen")
+
+        btn_layout = QHBoxLayout()
+        test_btn = QPushButton("Verbindung testen")
         test_btn.clicked.connect(self._test_ai_connection)
-        ai_form.addRow("", test_btn)
+        btn_layout.addWidget(test_btn)
+
+        refresh_btn = QPushButton("Modelle laden")
+        refresh_btn.clicked.connect(self._refresh_ai_models)
+        btn_layout.addWidget(refresh_btn)
+        ai_form.addRow("", btn_layout)
         
         ai_layout.addWidget(ai_group)
         ai_layout.addStretch()
@@ -230,26 +236,77 @@ class SettingsDialog(QDialog):
         if path:
             self.backup_path_input.setText(path)
     
-    def _test_ai_connection(self):
-        """Testet Ollama-Verbindung"""
-        from PyQt6.QtWidgets import QMessageBox
+    def _fetch_ollama_models(self) -> list[str] | None:
+        """Ruft verfuegbare Modelle von Ollama ab.
+
+        Returns:
+            Liste der Modellnamen oder None bei Verbindungsfehler.
+        """
         import requests
-        
+
         url = self.ai_url_input.text() or "http://localhost:11434"
-        
         try:
             response = requests.get(f"{url}/api/tags", timeout=5)
             if response.status_code == 200:
                 models = response.json().get("models", [])
-                model_names = [m["name"] for m in models]
-                QMessageBox.information(
-                    self, "Erfolg",
-                    f"Verbindung erfolgreich!\n\nVerfügbare Modelle:\n" + 
-                    "\n".join(model_names[:5])
-                )
-            else:
+                return [m["name"] for m in models]
+        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
+            pass
+        except (ValueError, KeyError):
+            pass
+        return None
+
+    def _populate_model_combo(self, model_names: list[str]):
+        """Befuellt die Modell-ComboBox mit den verfuegbaren Modellen.
+
+        Args:
+            model_names: Liste der Ollama-Modellnamen.
+        """
+        current = self.ai_model_combo.currentText()
+        self.ai_model_combo.clear()
+        self.ai_model_combo.addItems(model_names)
+        # Vorherige Auswahl beibehalten, falls noch verfuegbar
+        if current in model_names:
+            self.ai_model_combo.setCurrentText(current)
+        elif model_names:
+            self.ai_model_combo.setCurrentIndex(0)
+
+    def _refresh_ai_models(self):
+        """Laedt verfuegbare Modelle von Ollama und befuellt die ComboBox."""
+        from PyQt6.QtWidgets import QMessageBox
+
+        model_names = self._fetch_ollama_models()
+        if model_names is not None and len(model_names) > 0:
+            self._populate_model_combo(model_names)
+            QMessageBox.information(
+                self, "Modelle geladen",
+                f"{len(model_names)} Modell(e) gefunden."
+            )
+        else:
+            QMessageBox.warning(
+                self, "Fehler",
+                "Keine Modelle gefunden.\n\nStellen Sie sicher, dass Ollama laeuft."
+            )
+
+    def _test_ai_connection(self):
+        """Testet Ollama-Verbindung und aktualisiert die Modell-ComboBox."""
+        from PyQt6.QtWidgets import QMessageBox
+
+        model_names = self._fetch_ollama_models()
+        if model_names is not None:
+            self._populate_model_combo(model_names)
+            QMessageBox.information(
+                self, "Erfolg",
+                f"Verbindung erfolgreich!\n\nVerfuegbare Modelle:\n" +
+                "\n".join(model_names[:10])
+            )
+        else:
+            import requests
+            url = self.ai_url_input.text() or "http://localhost:11434"
+            try:
+                response = requests.get(f"{url}/api/tags", timeout=5)
                 QMessageBox.warning(self, "Fehler", f"Server antwortet mit: {response.status_code}")
-        except requests.exceptions.ConnectionError:
-            QMessageBox.warning(self, "Fehler", "Keine Verbindung zu Ollama.\n\nStellen Sie sicher, dass Ollama läuft.")
-        except Exception as e:
-            QMessageBox.warning(self, "Fehler", f"Fehler: {e}")
+            except requests.exceptions.ConnectionError:
+                QMessageBox.warning(self, "Fehler", "Keine Verbindung zu Ollama.\n\nStellen Sie sicher, dass Ollama laeuft.")
+            except (requests.exceptions.Timeout, OSError) as e:
+                QMessageBox.warning(self, "Fehler", f"Fehler: {e}")

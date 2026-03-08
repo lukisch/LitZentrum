@@ -7,7 +7,7 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QListWidget, QListWidgetItem,
     QPushButton, QTextEdit, QSpinBox, QLabel, QDialog, QDialogButtonBox,
-    QLineEdit, QComboBox, QCheckBox
+    QLineEdit, QComboBox, QCheckBox, QApplication
 )
 
 from core import LitSource, SourceManager
@@ -33,7 +33,13 @@ class QuotesTab(QWidget):
         add_btn = QPushButton("➕ Neues Zitat")
         add_btn.clicked.connect(self._add_quote)
         toolbar.addWidget(add_btn)
-        
+
+        self.cite_btn = QPushButton("📋 \\cite{} kopieren")
+        self.cite_btn.setToolTip("BibTeX-Zitierbefehl in die Zwischenablage kopieren")
+        self.cite_btn.clicked.connect(self._copy_cite_to_clipboard)
+        self.cite_btn.setEnabled(False)
+        toolbar.addWidget(self.cite_btn)
+
         toolbar.addStretch()
         
         # Filter
@@ -58,6 +64,7 @@ class QuotesTab(QWidget):
         self.quotes = quotes
         self.source = source
         self.source_manager = manager
+        self.cite_btn.setEnabled(True)
         self._refresh()
     
     def _refresh(self):
@@ -131,11 +138,27 @@ class QuotesTab(QWidget):
             self.source_manager.save_quotes(self.source, self.quotes)
             self._refresh()
     
+    def _copy_cite_to_clipboard(self):
+        """Kopiert \\cite{bibtex_key} in die Zwischenablage"""
+        if not self.source:
+            return
+        key = self.source.meta.bibtex_key
+        cite_cmd = f"\\cite{{{key}}}"
+        clipboard = QApplication.clipboard()
+        clipboard.setText(cite_cmd)
+        # Statusmeldung ueber das Hauptfenster
+        window = self.window()
+        if hasattr(window, "statusBar"):
+            window.statusBar().showMessage(
+                f"Kopiert: {cite_cmd}", 3000
+            )
+
     def clear(self):
         """Leert die Anzeige"""
         self.quotes = None
         self.source = None
         self.list_widget.clear()
+        self.cite_btn.setEnabled(False)
         self.count_label.setText("0 Zitate")
 
 

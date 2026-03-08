@@ -2,6 +2,8 @@
 LitZentrum - LiMeta Format (.limeta)
 Metadaten für Literaturquellen
 """
+import re
+import unicodedata
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
@@ -114,6 +116,54 @@ class LiMeta(LitFormat):
         author = self.first_author.replace(" ", "")
         year = str(self.year) if self.year else "oJ"
         return f"{author}{year}"
+
+    @property
+    def bibtex_key(self) -> str:
+        """Generiert einen BibTeX-Key (z.B. 'mueller_2023_quantenphysik').
+
+        Format: nachname_jahr_erstesWortDesTitels (ASCII, lowercase).
+        Umlaute werden transliteriert (ae, oe, ue, ss).
+        """
+        # Nachname: erster Autor, Nachname-Teil
+        author_raw = self.first_author if self.authors else "unknown"
+        # Umlaute manuell ersetzen (vor NFKD, da NFKD ae/oe/ue nicht erzeugt)
+        umlaut_map = {
+            "ae": "ae", "oe": "oe", "ue": "ue", "ss": "ss",
+            "\u00e4": "ae", "\u00f6": "oe", "\u00fc": "ue", "\u00df": "ss",
+            "\u00c4": "Ae", "\u00d6": "Oe", "\u00dc": "Ue",
+        }
+        def _to_ascii(text: str) -> str:
+            for char, repl in umlaut_map.items():
+                text = text.replace(char, repl)
+            # Restliche diakritische Zeichen via NFKD entfernen
+            text = unicodedata.normalize("NFKD", text)
+            text = text.encode("ascii", "ignore").decode("ascii")
+            return text
+
+        author_ascii = _to_ascii(author_raw).lower().strip()
+        # Nur Buchstaben behalten
+        author_ascii = re.sub(r"[^a-z]", "", author_ascii)
+        if not author_ascii:
+            author_ascii = "unknown"
+
+        # Jahr
+        year_part = str(self.year) if self.year else "oJ"
+
+        # Erstes signifikantes Wort des Titels (Stoppwoerter ueberspringen)
+        stopwords = {
+            "der", "die", "das", "ein", "eine", "the", "a", "an",
+            "und", "or", "and", "in", "im", "on", "of", "zu", "zur",
+            "zum", "fuer", "for", "von", "with", "mit", "ueber",
+        }
+        title_ascii = _to_ascii(self.title).lower()
+        words = re.findall(r"[a-z]+", title_ascii)
+        first_word = "untitled"
+        for w in words:
+            if w not in stopwords:
+                first_word = w
+                break
+
+        return f"{author_ascii}_{year_part}_{first_word}"
     
     def __str__(self) -> str:
         authors_str = ", ".join(self.authors[:2])

@@ -365,7 +365,7 @@ Ergebnis in summaries.lisum gespeichert:
 
 ```bash
 # Ordner öffnen
-cd "C:\Users\User\OneDrive\Software Entwicklung\SUITEN\LitZentrum"
+cd "C:\Users\User\OneDrive\.SOFTWARE\SUITEN\LitZentrum"
 
 # Abhängigkeiten installieren
 pip install -r requirements.txt
