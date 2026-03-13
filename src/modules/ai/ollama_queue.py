@@ -65,6 +65,11 @@ class OllamaQueue(QObject):
         self._running = False
         self._thread: Optional[threading.Thread] = None
         self._job_counter = 0
+        # FIX race condition: Lock schuetzt _running/_thread vor gleichzeitigem
+        # Zugriff aus mehreren Threads (z.B. add_job() parallel aufgerufen).
+        self._worker_lock = threading.Lock()
+        # FIX memory leak: Fertige/gecancellte Jobs werden nach diesem Limit entfernt.
+        self._max_completed_jobs = 100
     
     def is_available(self) -> bool:
         """Prüft ob Ollama erreichbar ist"""
@@ -121,23 +126,44 @@ class OllamaQueue(QObject):
     
     def _ensure_worker(self):
         """Stellt sicher dass Worker-Thread läuft"""
-        if not self._running:
-            self._running = True
-            self._thread = threading.Thread(target=self._worker, daemon=True)
-            self._thread.start()
+        # FIX race condition: Ohne Lock konnten zwei gleichzeitige add_job()-Aufrufe
+        # beide `not self._running` sehen und zwei Worker-Threads starten.
+        with self._worker_lock:
+            if not self._running:
+                self._running = True
+                self._thread = threading.Thread(target=self._worker, daemon=True)
+                self._thread.start()
     
+    def _cleanup_old_jobs(self):
+        """Entfernt aelteste abgeschlossene/gecancellte Jobs um Memory-Leak zu verhindern."""
+        terminal_states = {JobStatus.COMPLETED, JobStatus.FAILED, JobStatus.CANCELLED}
+        done_ids = [
+            jid for jid, job in self._jobs.items()
+            if job.status in terminal_states
+        ]
+        if len(done_ids) > self._max_completed_jobs:
+            # Aelteste zuerst entfernen (Einfuegereihenfolge via dict)
+            for jid in done_ids[: len(done_ids) - self._max_completed_jobs]:
+                del self._jobs[jid]
+
     def _worker(self):
         """Worker-Thread für Queue-Verarbeitung"""
         while self._running:
             try:
                 job_id = self._queue.get(timeout=1)
                 job = self._jobs.get(job_id)
-                
+
                 if not job or job.status != JobStatus.PENDING:
+                    self._queue.task_done()
                     continue
-                
+
                 self._process_job(job)
-                
+                self._queue.task_done()
+
+                # FIX memory leak: _jobs waechst unbegrenzt ohne Bereinigung.
+                # Aelteste abgeschlossene Jobs periodisch entfernen.
+                self._cleanup_old_jobs()
+
             except queue.Empty:
                 # Queue leer, weiter warten
                 pass

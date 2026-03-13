@@ -281,3 +281,20 @@ class PDFViewer(QWidget):
             event.accept()
         else:
             super().wheelEvent(event)
+
+    def closeEvent(self, event):
+        # FIX fitz document leak: Das fitz-Dokument wird nie geschlossen wenn das
+        # Widget zerstoert wird. PyMuPDF haelt interne C-Ressourcen und File-Handles.
+        # close_pdf() setzt self.doc = None nach doc.close(), verhindert doppeltes Close.
+        self.close_pdf()
+        super().closeEvent(event)
+
+    def __del__(self):
+        # Sicherheitsnetz: Falls closeEvent nicht aufgerufen wurde (z.B. bei
+        # direkter Widget-Loeschung ohne Window-Close).
+        try:
+            if self.doc:
+                self.doc.close()
+                self.doc = None
+        except Exception:
+            pass

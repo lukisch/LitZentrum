@@ -1,6 +1,6 @@
 """
-LitZentrum - Projekt-Manager
-Verwaltet Literaturprojekte (Ordner-basiert)
+LitZentrum - Project Manager.
+Manages literature projects (folder-based).
 """
 from dataclasses import dataclass
 from pathlib import Path
@@ -12,7 +12,7 @@ from formats import LiProj, LiTask, LiNote
 
 @dataclass
 class LitProject:
-    """Repräsentiert ein Literaturprojekt"""
+    """Represents a literature project."""
     path: Path
     config: LiProj
     
@@ -38,7 +38,7 @@ class LitProject:
 
 
 class ProjectManager:
-    """Verwaltet Literaturprojekte"""
+    """Manages literature projects."""
     
     PROJECT_CONFIG_FILE = "projekt_config.liproj"
     
@@ -46,10 +46,20 @@ class ProjectManager:
         self.recent_projects: List[Path] = []
         self.current_project: Optional[LitProject] = None
     
-    def create_project(self, path: Path, name: str, 
+    def create_project(self, path: Path, name: str,
                        description: str = None,
                        citation_style: str = "apa") -> LitProject:
-        """Erstellt ein neues Projekt"""
+        """Creates a new project at the given path.
+
+        Args:
+            path: Directory to create the project in.
+            name: Human-readable project name.
+            description: Optional project description.
+            citation_style: Citation style identifier (default: "apa").
+
+        Returns:
+            The newly created LitProject instance.
+        """
         path = Path(path)
         
         # Ordner erstellen
@@ -78,7 +88,17 @@ class ProjectManager:
         return project
     
     def open_project(self, path: Path) -> LitProject:
-        """Öffnet ein bestehendes Projekt"""
+        """Opens an existing project from disk.
+
+        Args:
+            path: Root directory of the project.
+
+        Returns:
+            The loaded LitProject instance.
+
+        Raises:
+            FileNotFoundError: If no project config file is found at the path.
+        """
         path = Path(path)
         config_path = path / self.PROJECT_CONFIG_FILE
         
@@ -94,11 +114,11 @@ class ProjectManager:
         return project
     
     def is_project(self, path: Path) -> bool:
-        """Prüft ob Pfad ein gültiges Projekt ist"""
+        """Returns True if the given path contains a valid LitZentrum project config."""
         return (Path(path) / self.PROJECT_CONFIG_FILE).exists()
     
     def get_source_folders(self, project: LitProject = None) -> List[Path]:
-        """Gibt alle Quellen-Ordner zurück"""
+        """Returns all source sub-directories for the given (or current) project."""
         project = project or self.current_project
         if not project:
             return []
@@ -110,7 +130,7 @@ class ProjectManager:
         return [p for p in sources_path.iterdir() if p.is_dir()]
     
     def get_project_tasks(self, project: LitProject = None) -> LiTask:
-        """Lädt projektweite Aufgaben"""
+        """Loads project-wide tasks."""
         project = project or self.current_project
         if not project:
             return LiTask()
@@ -121,13 +141,13 @@ class ProjectManager:
         return LiTask()
     
     def save_project_tasks(self, tasks: LiTask, project: LitProject = None):
-        """Speichert projektweite Aufgaben"""
+        """Saves project-wide tasks."""
         project = project or self.current_project
         if project:
             tasks.save(project.project_tasks_path)
     
     def get_project_notes(self, project: LitProject = None) -> LiNote:
-        """Lädt projektweite Notizen"""
+        """Loads project-wide notes."""
         project = project or self.current_project
         if not project:
             return LiNote()
@@ -138,13 +158,13 @@ class ProjectManager:
         return LiNote()
     
     def save_project_notes(self, notes: LiNote, project: LitProject = None):
-        """Speichert projektweite Notizen"""
+        """Saves project-wide notes."""
         project = project or self.current_project
         if project:
             notes.save(project.project_notes_path)
     
     def _add_to_recent(self, path: Path):
-        """Fügt Projekt zu Recent-Liste hinzu"""
+        """Prepends a project path to the recent-projects list (max 10 entries)."""
         path = Path(path).resolve()
         if path in self.recent_projects:
             self.recent_projects.remove(path)
@@ -152,5 +172,5 @@ class ProjectManager:
         self.recent_projects = self.recent_projects[:10]  # Max 10
     
     def close_project(self):
-        """Schließt aktuelles Projekt"""
+        """Closes the currently open project."""
         self.current_project = None

@@ -1,6 +1,6 @@
 """
-LitZentrum - Literaturverwaltung
-Haupteinstiegspunkt
+LitZentrum - Literature management application.
+Application entry point.
 """
 import sys
 from pathlib import Path
@@ -18,7 +18,7 @@ from gui import MainWindow
 
 
 def main():
-    """Startet LitZentrum"""
+    """Starts the LitZentrum application."""
     # High-DPI Unterstützung
     QApplication.setHighDpiScaleFactorRoundingPolicy(
         Qt.HighDpiScaleFactorRoundingPolicy.PassThrough

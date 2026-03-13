@@ -1,5 +1,5 @@
 """
-LitZentrum - Basis-Klasse für alle Dateiformate
+LitZentrum - Base class for all file formats.
 """
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field, asdict
@@ -13,17 +13,17 @@ T = TypeVar('T', bound='LitFormat')
 
 
 class LitFormatError(Exception):
-    """Fehler beim Verarbeiten eines LitFormat"""
+    """Raised when a LitFormat file cannot be processed."""
     pass
 
 
 class LitValidationError(LitFormatError):
-    """Validierungsfehler"""
+    """Raised when a LitFormat object fails JSON schema validation."""
     pass
 
 
 class LitFormat(ABC):
-    """Abstrakte Basisklasse für alle .li* Dateiformate"""
+    """Abstract base class for all .li* file formats."""
     
     SCHEMA_VERSION = "1.0.0"
     FILE_EXTENSION: str = ""
@@ -33,7 +33,7 @@ class LitFormat(ABC):
     
     @classmethod
     def get_schema(cls) -> dict:
-        """Lädt und cached das JSON-Schema"""
+        """Loads and caches the JSON schema for this format."""
         if cls.SCHEMA_FILE not in cls._schema_cache:
             schema_path = Path(__file__).parent.parent.parent / "schemas" / cls.SCHEMA_FILE
             if schema_path.exists():
@@ -45,17 +45,17 @@ class LitFormat(ABC):
     
     @abstractmethod
     def to_dict(self) -> dict:
-        """Konvertiert zu Dictionary für JSON-Speicherung"""
+        """Converts the object to a dictionary for JSON serialization."""
         pass
-    
+
     @classmethod
     @abstractmethod
     def from_dict(cls: Type[T], data: dict) -> T:
-        """Erstellt Instanz aus Dictionary"""
+        """Creates an instance from a dictionary."""
         pass
-    
+
     def validate(self) -> bool:
-        """Validiert gegen JSON-Schema"""
+        """Validates the object against its JSON schema."""
         schema = self.get_schema()
         if not schema:
             return True  # Kein Schema = keine Validierung
@@ -67,7 +67,7 @@ class LitFormat(ABC):
             raise LitValidationError(f"Validierungsfehler: {e.message}")
     
     def save(self, path: Path) -> None:
-        """Speichert in Datei"""
+        """Validates and saves the object to a JSON file at the given path."""
         self.validate()
         
         path = Path(path)
@@ -81,7 +81,17 @@ class LitFormat(ABC):
     
     @classmethod
     def load(cls: Type[T], path: Path) -> T:
-        """Lädt aus Datei"""
+        """Loads an instance from a JSON file.
+
+        Args:
+            path: Path to the .li* file.
+
+        Returns:
+            Deserialized instance of the concrete subclass.
+
+        Raises:
+            LitFormatError: If the file does not exist.
+        """
         path = Path(path)
         
         if not path.exists():
@@ -94,11 +104,11 @@ class LitFormat(ABC):
 
 
 def generate_id(prefix: str = "") -> str:
-    """Generiert eine eindeutige ID"""
+    """Generates a unique timestamp-based ID with an optional prefix."""
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
     return f"{prefix}{timestamp}" if prefix else timestamp
 
 
 def now_iso() -> str:
-    """Gibt aktuelle Zeit als ISO-String zurück"""
+    """Returns the current local time as an ISO 8601 string."""
     return datetime.now().isoformat()

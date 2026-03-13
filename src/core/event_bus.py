@@ -1,6 +1,6 @@
 """
-LitZentrum - Event Bus
-Zentrale Event-Verteilung zwischen Modulen
+LitZentrum - Event Bus.
+Central event distribution between modules.
 """
 from PyQt6.QtCore import QObject, pyqtSignal
 from enum import Enum
@@ -8,7 +8,7 @@ from typing import Any, Callable, Dict, List
 
 
 class EventType(Enum):
-    """Alle Event-Typen in LitZentrum"""
+    """All event types used in LitZentrum."""
     
     # Projekt-Events
     PROJECT_OPENED = "project_opened"
@@ -57,7 +57,7 @@ class EventType(Enum):
 
 
 class EventBus(QObject):
-    """Zentrale Event-Verteilung"""
+    """Singleton event bus for distributing events between decoupled modules."""
     
     # Qt Signal für alle Events
     event_fired = pyqtSignal(str, object)  # event_type, data
@@ -125,11 +125,10 @@ class EventBus(QObject):
                     print(f"[EventBus] Handler-Fehler bei {event_type.value}: {e}")
     
     def clear(self):
-        """Entfernt alle Handler"""
+        """Removes all registered handlers."""
         self._handlers.clear()
 
 
-# Globale Instanz
 def get_event_bus() -> EventBus:
-    """Gibt die globale EventBus-Instanz zurück"""
+    """Returns the global EventBus singleton instance."""
     return EventBus.instance()
