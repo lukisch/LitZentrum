@@ -357,8 +357,33 @@ class MainWindow(QMainWindow):
         self._show_status("BibTeX-Import noch nicht implementiert")
     
     def _on_export_bibliography(self):
-        """Bibliografie exportieren"""
-        self._show_status("Bibliografie-Export noch nicht implementiert")
+        """Export bibliography as BibTeX (.bib) file."""
+        if not self.source_manager:
+            QMessageBox.warning(self, "Hinweis", "Bitte zuerst ein Projekt öffnen.")
+            return
+
+        sources = self.source_manager.get_all_sources()
+        if not sources:
+            QMessageBox.information(self, "Export", "Das Projekt enthält keine Quellen.")
+            return
+
+        path, _ = QFileDialog.getSaveFileName(
+            self,
+            "Bibliografie exportieren",
+            str(Path.home() / "bibliography.bib"),
+            "BibTeX-Dateien (*.bib);;Alle Dateien (*)",
+        )
+        if not path:
+            return
+
+        try:
+            from modules.bibliography.bibtex import BibTeXGenerator
+            generator = BibTeXGenerator()
+            metas = [src.meta for src in sources]
+            generator.save_bibliography(metas, Path(path))
+            self._show_status(f"Bibliografie exportiert: {Path(path).name} ({len(metas)} Einträge)")
+        except Exception as exc:
+            QMessageBox.critical(self, "Export-Fehler", f"Export fehlgeschlagen:\n{exc}")
     
     def _on_source_selected(self, source: LitSource):
         """Quelle wurde ausgewählt"""
