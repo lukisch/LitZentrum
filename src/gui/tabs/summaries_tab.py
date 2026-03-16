@@ -3,8 +3,8 @@ LitZentrum - Zusammenfassungen Tab
 """
 from typing import Optional
 
-from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import (
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QListWidget, QListWidgetItem,
     QPushButton, QTextEdit, QLabel, QDialog, QDialogButtonBox,
     QLineEdit, QComboBox
@@ -140,7 +140,7 @@ class SummariesTab(QWidget):
     
     def _ai_summarize(self):
         """KI-Zusammenfassung erstellen"""
-        from PyQt6.QtWidgets import QMessageBox
+        from PySide6.QtWidgets import QMessageBox
 
         if not self.source or not self.source.has_pdf:
             QMessageBox.warning(self, "Hinweis", "Keine PDF vorhanden.")

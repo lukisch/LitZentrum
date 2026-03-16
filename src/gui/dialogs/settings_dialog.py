@@ -1,7 +1,7 @@
 """
 LitZentrum - Einstellungen Dialog
 """
-from PyQt6.QtWidgets import (
+from PySide6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QFormLayout, QTabWidget,
     QLineEdit, QComboBox, QPushButton, QCheckBox, QSpinBox,
     QDialogButtonBox, QFileDialog, QLabel, QWidget, QGroupBox
@@ -215,7 +215,7 @@ class SettingsDialog(QDialog):
     
     def _restore_defaults(self):
         """Stellt Standardeinstellungen wieder her"""
-        from PyQt6.QtWidgets import QMessageBox
+        from PySide6.QtWidgets import QMessageBox
         
         reply = QMessageBox.question(
             self, "Zurücksetzen",
@@ -273,7 +273,7 @@ class SettingsDialog(QDialog):
 
     def _refresh_ai_models(self):
         """Laedt verfuegbare Modelle von Ollama und befuellt die ComboBox."""
-        from PyQt6.QtWidgets import QMessageBox
+        from PySide6.QtWidgets import QMessageBox
 
         model_names = self._fetch_ollama_models()
         if model_names is not None and len(model_names) > 0:
@@ -290,7 +290,7 @@ class SettingsDialog(QDialog):
 
     def _test_ai_connection(self):
         """Testet Ollama-Verbindung und aktualisiert die Modell-ComboBox."""
-        from PyQt6.QtWidgets import QMessageBox
+        from PySide6.QtWidgets import QMessageBox
 
         model_names = self._fetch_ollama_models()
         if model_names is not None:

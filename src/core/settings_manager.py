@@ -7,7 +7,7 @@ from typing import Any, Dict, List, Optional
 import json
 import logging
 
-from PyQt6.QtCore import QSettings
+from PySide6.QtCore import QSettings
 
 
 class SettingsManager:

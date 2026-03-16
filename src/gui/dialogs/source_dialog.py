@@ -4,7 +4,7 @@ LitZentrum - Quellen Dialog
 from pathlib import Path
 from typing import Optional
 
-from PyQt6.QtWidgets import (
+from PySide6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QFormLayout, QTabWidget,
     QLineEdit, QTextEdit, QComboBox, QPushButton, QSpinBox,
     QDialogButtonBox, QFileDialog, QLabel, QWidget
@@ -205,7 +205,7 @@ class SourceDialog(QDialog):
     
     def _validate_and_accept(self):
         """Validiert und akzeptiert"""
-        from PyQt6.QtWidgets import QMessageBox
+        from PySide6.QtWidgets import QMessageBox
         
         if not self.title_input.text().strip():
             QMessageBox.warning(self, "Fehler", "Bitte einen Titel eingeben.")

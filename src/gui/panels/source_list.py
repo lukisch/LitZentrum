@@ -4,8 +4,8 @@ Zeigt alle Quellen mit Filterung
 """
 from typing import List, Optional
 
-from PyQt6.QtCore import Qt, pyqtSignal
-from PyQt6.QtWidgets import (
+from PySide6.QtCore import Qt, Signal
+from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QListWidget, QListWidgetItem,
     QLabel, QLineEdit, QComboBox, QPushButton
 )
@@ -16,7 +16,7 @@ from core import LitSource
 class SourceListPanel(QWidget):
     """Panel mit Quellenliste"""
     
-    source_selected = pyqtSignal(object)  # LitSource
+    source_selected = Signal(object)  # LitSource
     
     def __init__(self, parent=None):
         super().__init__(parent)

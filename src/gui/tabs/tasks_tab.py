@@ -3,13 +3,13 @@ LitZentrum - Aufgaben Tab
 """
 from typing import Optional
 
-from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import (
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QListWidget, QListWidgetItem,
     QPushButton, QTextEdit, QSpinBox, QLabel, QDialog, QDialogButtonBox,
     QLineEdit, QComboBox, QDateEdit, QCheckBox
 )
-from PyQt6.QtCore import QDate
+from PySide6.QtCore import QDate
 
 from core import LitSource, SourceManager
 from formats import LiTask, Task

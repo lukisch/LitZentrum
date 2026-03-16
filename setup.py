@@ -20,7 +20,7 @@ setup(
     package_dir={"": "src"},
     python_requires=">=3.10",
     install_requires=[
-        "PyQt6>=6.4.0",
+        "PySide6>=6.4.0",
         "PyMuPDF>=1.23.0",
         "bibtexparser>=1.4.0",
         "jsonschema>=4.17.0",

@@ -4,8 +4,8 @@ Zeigt Details zur ausgewählten Quelle mit Tabs
 """
 from typing import Optional
 
-from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import (
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QTabWidget,
     QLabel, QScrollArea, QFrame, QPushButton, QTextEdit,
     QApplication

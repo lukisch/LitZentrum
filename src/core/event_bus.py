@@ -2,7 +2,7 @@
 LitZentrum - Event Bus.
 Central event distribution between modules.
 """
-from PyQt6.QtCore import QObject, pyqtSignal
+from PySide6.QtCore import QObject, Signal
 from enum import Enum
 from typing import Any, Callable, Dict, List
 
@@ -60,7 +60,7 @@ class EventBus(QObject):
     """Singleton event bus for distributing events between decoupled modules."""
     
     # Qt Signal für alle Events
-    event_fired = pyqtSignal(str, object)  # event_type, data
+    event_fired = Signal(str, object)  # event_type, data
     
     _instance = None
     

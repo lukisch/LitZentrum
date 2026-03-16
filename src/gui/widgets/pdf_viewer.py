@@ -5,9 +5,9 @@ Integrierter PDF-Betrachter mit Textauswahl
 from pathlib import Path
 from typing import Optional, Callable
 
-from PyQt6.QtCore import Qt, pyqtSignal, QPoint, QRect
-from PyQt6.QtGui import QPixmap, QImage, QPainter, QColor, QWheelEvent, QMouseEvent
-from PyQt6.QtWidgets import (
+from PySide6.QtCore import Qt, Signal, QPoint, QRect
+from PySide6.QtGui import QPixmap, QImage, QPainter, QColor, QWheelEvent, QMouseEvent
+from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QScrollArea, QLabel,
     QPushButton, QSpinBox, QComboBox, QToolBar, QFrame,
     QSizePolicy
@@ -23,7 +23,7 @@ except ImportError:
 class PDFPageWidget(QLabel):
     """Widget für eine einzelne PDF-Seite"""
     
-    text_selected = pyqtSignal(str, int, tuple)  # text, page, rect
+    text_selected = Signal(str, int, tuple)  # text, page, rect
     
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -45,8 +45,8 @@ class PDFPageWidget(QLabel):
 class PDFViewer(QWidget):
     """PDF-Betrachter Widget"""
     
-    page_changed = pyqtSignal(int)  # Aktuelle Seite
-    text_selected = pyqtSignal(str, int)  # Text, Seite
+    page_changed = Signal(int)  # Aktuelle Seite
+    text_selected = Signal(str, int)  # Text, Seite
     
     ZOOM_LEVELS = [50, 75, 100, 125, 150, 200, 300]
     

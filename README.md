@@ -35,7 +35,7 @@ python src/main.py
 ## Abhaengigkeiten
 
 - Python 3.10+
-- PyQt6
+- PySide6
 - PyMuPDF (fitz)
 - bibtexparser
 - jsonschema
@@ -131,7 +131,7 @@ Features:
 
 AGPL v3 - Siehe [LICENSE](LICENSE)
 
-Dieses Projekt verwendet PyQt6 (GPL) und PyMuPDF (AGPL).
+Dieses Projekt verwendet PySide6 (LGPL) und PyMuPDF (AGPL).
 
 ## Version
 
@@ -176,7 +176,7 @@ python src/main.py
 ### Dependencies
 
 - Python 3.10+
-- PyQt6
+- PySide6
 - PyMuPDF (fitz)
 - bibtexparser
 - jsonschema
@@ -272,7 +272,7 @@ Features:
 
 AGPL v3 - See [LICENSE](LICENSE)
 
-This project uses PyQt6 (GPL) and PyMuPDF (AGPL).
+This project uses PySide6 (LGPL) and PyMuPDF (AGPL).
 
 ### Version
 

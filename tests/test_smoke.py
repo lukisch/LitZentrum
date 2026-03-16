@@ -16,7 +16,7 @@ for mod in ['PyQt6', 'PyQt6.QtWidgets', 'PyQt6.QtCore', 'PyQt6.QtGui',
 mock_qobject = MagicMock()
 mock_qobject.__init_subclass__ = classmethod(lambda cls, **kw: None)
 sys.modules['PyQt6.QtCore'].QObject = mock_qobject
-sys.modules['PyQt6.QtCore'].pyqtSignal = MagicMock(return_value=MagicMock())
+sys.modules['PyQt6.QtCore'].Signal = MagicMock(return_value=MagicMock())
 sys.modules['PyQt6.QtCore'].QSettings = MagicMock
 
 # Projekt-src zum Path

@@ -6,8 +6,8 @@ from pathlib import Path
 from typing import Optional
 import logging
 
-from PyQt6.QtCore import Qt, pyqtSignal
-from PyQt6.QtWidgets import (
+from PySide6.QtCore import Qt, Signal
+from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QTreeWidget, QTreeWidgetItem,
     QLabel, QHeaderView
 )
@@ -18,7 +18,7 @@ from core import LitProject, LitSource
 class ProjectTreePanel(QWidget):
     """Panel mit Projektbaum"""
     
-    source_selected = pyqtSignal(object)  # LitSource
+    source_selected = Signal(object)  # LitSource
     
     def __init__(self, parent=None):
         super().__init__(parent)

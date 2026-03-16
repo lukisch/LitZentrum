@@ -5,8 +5,8 @@ Tab mit integriertem PDF-Viewer
 from typing import Optional
 from pathlib import Path
 
-from PyQt6.QtCore import Qt, pyqtSignal
-from PyQt6.QtWidgets import (
+from PySide6.QtCore import Qt, Signal
+from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QSplitter,
     QPushButton, QLabel, QTextEdit, QLineEdit,
     QListWidget, QListWidgetItem, QGroupBox
@@ -19,8 +19,8 @@ from ..widgets.pdf_viewer import PDFViewer
 class PDFTab(QWidget):
     """Tab mit PDF-Viewer und Werkzeugen"""
     
-    quote_requested = pyqtSignal(str, int)  # Text, Seite
-    note_requested = pyqtSignal(str, int)   # Text, Seite
+    quote_requested = Signal(str, int)  # Text, Seite
+    note_requested = Signal(str, int)   # Text, Seite
     
     def __init__(self, parent=None):
         super().__init__(parent)

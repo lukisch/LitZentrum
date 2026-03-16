@@ -3,7 +3,7 @@ LitZentrum - Neues Projekt Dialog
 """
 from pathlib import Path
 
-from PyQt6.QtWidgets import (
+from PySide6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QFormLayout,
     QLineEdit, QTextEdit, QComboBox, QPushButton,
     QDialogButtonBox, QFileDialog, QLabel
@@ -87,7 +87,7 @@ class NewProjectDialog(QDialog):
     
     def _validate_and_accept(self):
         """Validiert und akzeptiert"""
-        from PyQt6.QtWidgets import QMessageBox
+        from PySide6.QtWidgets import QMessageBox
         
         if not self.name_input.text().strip():
             QMessageBox.warning(self, "Fehler", "Bitte einen Projektnamen eingeben.")

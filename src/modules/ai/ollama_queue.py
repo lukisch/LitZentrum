@@ -16,7 +16,7 @@ try:
 except ImportError:
     HAS_REQUESTS = False
 
-from PyQt6.QtCore import QObject, pyqtSignal
+from PySide6.QtCore import QObject, Signal
 
 
 class JobStatus(Enum):
@@ -45,10 +45,10 @@ class AIJob:
 class OllamaQueue(QObject):
     """Warteschlange für Ollama-Anfragen"""
     
-    job_started = pyqtSignal(str)  # job_id
-    job_progress = pyqtSignal(str, int)  # job_id, progress
-    job_completed = pyqtSignal(str, str)  # job_id, result
-    job_failed = pyqtSignal(str, str)  # job_id, error
+    job_started = Signal(str)  # job_id
+    job_progress = Signal(str, int)  # job_id, progress
+    job_completed = Signal(str, str)  # job_id, result
+    job_failed = Signal(str, str)  # job_id, error
     
     def __init__(self, base_url: str = "http://localhost:11434", 
                  default_model: str = "mistral:latest"):
